@@ -4,38 +4,40 @@ const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const {
   createProject,
-  getProject,
   getUserProjects,
-  inviteCollaborator,
+  getProject,
   updateProject,
   deleteProject,
-    createTeam,
-  addUserToTeam,
-  removeUserFromTeam,
-  renameTeam,
-  deleteTeam
+  inviteCollaborator,
+  removeUser,
+  leaveProject
 } = require('../controllers/projectController');
 
-// Token required
+// All routes require auth
 router.use(auth);
 
-// 📌 GET all user projects
+// Get all projects (owned + shared)
 router.get('/all', getUserProjects);
 
-// 📌 CREATE project
+// Create new project
 router.post('/create', createProject);
+
+// Update project (only owner)
 router.put('/:id', updateProject);
-// 📌 INVITE collaborator
+
+// Add collaborator
 router.post('/:id/collaborators', inviteCollaborator);
-router.post('/:projectId/teams', createTeam);
-router.post('/:projectId/teams/:teamId/members', addUserToTeam);
-router.delete('/:projectId/teams/:teamId/members/:userId', removeUserFromTeam);
-router.put('/:projectId/teams/:teamId', renameTeam);
-router.delete('/:projectId/teams/:teamId', deleteTeam);
-// 📌 GET single project
+
+// Remove collaborator
+router.delete('/:id/collaborators/:userId', removeUser);
+
+// User leaves project
+router.post('/:id/leave', leaveProject);
+
+// Get single project
 router.get('/:id', getProject);
 
-// 📌 DELETE project
+// Delete project (only owner) → MUST BE LAST
 router.delete('/:id', deleteProject);
 
 module.exports = router;
