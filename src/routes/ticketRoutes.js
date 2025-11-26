@@ -9,7 +9,13 @@ const {
     addComment,
     getProjectTickets,
     getSingleTicket,
-    getTicketLogs   // ← YANGI qo‘shildi
+    getTicketLogs,
+    updateComment,
+    getComments,
+    deleteComment,
+    replyComment,
+    editReply,
+    deleteReply
 } = require('../controllers/ticketController');
 
 router.use(auth);
@@ -32,7 +38,27 @@ router.put('/:ticketId', updateTicket);
 // Delete ticket
 router.delete('/:ticketId', deleteTicket);
 
+
 // Add comment
 router.post('/:ticketId/comment', addComment);
 
+// get comment
+router.get('/:ticketId/comments', getComments);
+
+// Update comment
+router.put('/:ticketId/comment/:commentId', updateComment);
+// Delete comment
+router.delete('/:ticketId/comment/:commentId', deleteComment);
+
+
+// COMMENT → REPLY
+router.post('/:ticketId/comment/:commentId/reply', replyComment);
+
+// EDIT REPLY
+router.put('/:ticketId/comment/:commentId/reply/:replyId', editReply);
+
+// DELETE REPLY
+router.delete('/:ticketId/comment/:commentId/reply/:replyId', deleteReply);
+
 module.exports = router;
+

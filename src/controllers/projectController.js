@@ -1,7 +1,7 @@
 const Project = require('../models/Project');
 const User = require('../models/User');
 const Repo = require('../models/Repo');
-
+const Notification = require('../models/Notification');
 // CREATE
 exports.createProject = async (req, res) => {
   try {
@@ -43,6 +43,26 @@ exports.getUserProjects = async (req, res) => {
   }
 };
 
+// get project user
+exports.getProjectUsers = async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id)
+            .populate("owner", "username email")
+            .populate("collaborators", "username email");
+
+        if (!project) return res.status(404).json({ message: "Project not found" });
+
+        const users = [
+            { _id: project.owner._id, username: project.owner.username, role: "Owner" },
+            ...project.collaborators.map(u => ({ _id: u._id, username: u.username, role: "Collaborator" }))
+        ];
+
+        res.json(users);
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
 // GET PROJECT
 exports.getProject = async (req, res) => {
   try {
@@ -136,8 +156,17 @@ exports.inviteCollaborator = async (req, res) => {
       project.collaborators = [];
     }
 
+    // if not added already push
     if (!project.collaborators.includes(userId)) {
       project.collaborators.push(userId);
+
+      // 🔥 REQUIRED FIX — type qo‘shildi
+      await Notification.create({
+        user: userId,
+        project: project._id,
+        message: `You have been invited to collaborate on project "${project.name}"`,
+        type: "project_invite"
+      });
     }
 
     await project.save();
@@ -145,7 +174,10 @@ exports.inviteCollaborator = async (req, res) => {
     const updated = await Project.findById(req.params.id)
       .populate('owner collaborators', 'username email');
 
-    res.json(updated);
+    res.json({
+      message: "User invited & notification sent",
+      project: updated
+    });
 
   } catch (error) {
     console.error(error);

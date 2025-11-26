@@ -9,6 +9,7 @@ const {
   updateProject,
   deleteProject,
   inviteCollaborator,
+  getProjectUsers,
   removeUser,
   leaveProject
 } = require('../controllers/projectController');
@@ -28,6 +29,8 @@ router.put('/:id', updateProject);
 // Add collaborator
 router.post('/:id/collaborators', inviteCollaborator);
 
+// project users
+router.get('/:id/users', getProjectUsers);
 // Remove collaborator
 router.delete('/:id/collaborators/:userId', removeUser);
 
