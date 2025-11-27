@@ -19,45 +19,62 @@ const {
 } = require('../controllers/ticketController');
 
 router.use(auth);
-
 // Create ticket
+// params: projectId
+// body: { title, description, priority, assignedTo, status }
 router.post('/:projectId', createTicket);
 
 // Get all tickets for project
+// params: projectId
 router.get('/:projectId/all', getProjectTickets);
 
 // Get single ticket
+// params: ticketId
 router.get('/single/:ticketId', getSingleTicket);
 
-// ⬇️ Yangi qo‘shilgan route — Activity Log olish
+// Get ticket activity logs
+// params: ticketId
 router.get('/:ticketId/logs', getTicketLogs);
 
-// Update ticket (status, assignedTo, title, etc.)
+// Update ticket
+// params: ticketId
+// body: fields to update (status, assignedTo, title, etc.)
 router.put('/:ticketId', updateTicket);
 
 // Delete ticket
+// params: ticketId
 router.delete('/:ticketId', deleteTicket);
 
-
-// Add comment
+// Add comment to ticket
+// params: ticketId
+// body: { content }
 router.post('/:ticketId/comment', addComment);
 
-// get comment
+// Get comments for ticket
+// params: ticketId
 router.get('/:ticketId/comments', getComments);
 
-// Update comment
+// Update a comment
+// params: ticketId, commentId
+// body: { content }
 router.put('/:ticketId/comment/:commentId', updateComment);
-// Delete comment
+
+// Delete a comment
+// params: ticketId, commentId
 router.delete('/:ticketId/comment/:commentId', deleteComment);
 
-
-// COMMENT → REPLY
+// Reply to a comment
+// params: ticketId, commentId
+// body: { content }
 router.post('/:ticketId/comment/:commentId/reply', replyComment);
 
-// EDIT REPLY
+// Edit a reply
+// params: ticketId, commentId, replyId
+// body: { content }
 router.put('/:ticketId/comment/:commentId/reply/:replyId', editReply);
 
-// DELETE REPLY
+// Delete a reply
+// params: ticketId, commentId, replyId
 router.delete('/:ticketId/comment/:commentId/reply/:replyId', deleteReply);
 
 module.exports = router;
